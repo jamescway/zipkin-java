@@ -16,6 +16,18 @@ before_install:
   - mysql -uroot -e 'SET GLOBAL innodb_file_format=Barracuda'
   - mysql -utravis -e 'create database if not exists zipkin'
   - mysql -utravis -Dzipkin < zipkin-java-jdbc/src/main/resources/mysql.sql
-
+  - git config user.name "$GH_USER"
+  - git config user.email "$GH_EMAIL"
+  - git config credential.helper "store --file=.git/credentials"
+  - echo "https://$GH_TOKEN:@github.com" > .git/credentials
+env:
+  global:
+    - GH_NAME="openzipkin-release"
+    - GH_EMAIL=openzipkin@gmail.com"
+    secure: "WRIlRDVdXd8kWyFnMTYle2C1M+jTK0UXiIstfD3xhv8AVfheDv2e5FEX5Ge5JwQk1W9CevXrKSvVrXOoeMuGFV+gFEAMnY24yf9XTTl0L8G0NLf9BiVvuvhqkYnB4rnCl9/Ri7WES1o+YI1A7NUNDPtwtMKOABgUL2yFIBe9nfWFhCIPEQsnzfRpNbV+Mf3XjTW0v+ognUDVokcK0OCIXYh6aZ2DRZSTXNobQCoTp5VrPQQXFK7kL2Kka9Clnv8GGPAmB0XciM9emgImpMTeVwewH00TSPMuun0xAj32ckP1l4La5y72PmqTz7oFXxZ/ZneYB2RnvhLX2sC1ltDEXqHFwPgco5xSSKbkHpP8GwvNytZobp1K9RITusJh8cHMmQ9PKmLboeA+Oa9TqFxKoQ3WlozN5PbTnlNyYuaXKQ/GZnNsAWlDMuY4WWATIy/GWiRqXaDDEkmbyriabxlPex6Z1YUP6TVWNMBBDIgd57B7WGyrtuu430siV4jZNZcH4G3TVVnZMkMNlola+fxl/JB5rw7z3IYr46k/7KKArJaGXW/T3F6alzxLcNv+fG5AMc7rLAujyZ6cgPasPqP0ujf2k/fJM157eUITTw9YD1i+pvX4asCOX32kfunj85pUfA3+Vz9r0V8kiSz8C69aeupDqfCAzAVM/NaiQtrHki4="
+    secure: "ieEqlNHCtdnQ7g38EkMvbNInQcL0soD0NPpVZ0yOEkrd84Txa1MYWJRLuyZg1j04LamB0A5bX5/cVpTqm2ddRHb4VddHfwc0L2C/HpGb2/MFumj0O1byMuZ8f8mJaMCVooAdO1rwL94wEkudbzeYyxj37engQ2vOemO7hiI+BRaI8UKFuFN1RY8BlRfeQ5bXvGbRB9yyt0Tj6ObHVlia6rnjQjO6ig/ZRS8AZNvMzErXz1FjqRv5L4N7FaOy3r57LYbTVKRJg8B2a/tkiACGloW+ZJGjMPT3/kYTPLWP6NczIPsSOy19fHzO8Z1HjoBQG8kJr1K8PIoBrV44cjABDldzRC/mvOA9G4t55LD1EY00OfQZ5mzqycbm2oc+wEqwY8VZWaxMIF30dOTirliAOsiR/Eod+NMEgG2yrSwrTn6cYB2VXcJlTGKrBRyjXk8RF5lRpOFFuwXyH4hR8+T5BqtV2+f5kb/PkytBx01/Df+92F3wFTyDKz2kG41rdxG3UnRGFDEV+NQyinMFDXEYju/2XsASfoOSlteSryQcsgdmtDPx7ayX8v0qCe83a+l4+SrtwpXE4W+TrICL+q8bJl5acgztFILkklUkdi25qwQyxt9Ol+YPnova8cPInJAirCweSFK1aIEeXncm8iKQnzMmElg7HYP+QLUuuaTLBUo="
+    secure: "jc/U5XulW698pCpF3biVkZxL9xGpdiQN4vWbzSqCE2mrfTw0DUs2/rkXBr9zwtjwlIBrWW5xTcAFqoe/qc5acip1CFsQ20yonaiygS/4et8wRAVEAodYqP0Ct9QSO0Tfx2SU+xaItZEwqYsvM4PeIV4hA72Fn0B3G2ezAfaGOw5dJm5ANbsJ+gbQjyF/CN0Fk5RSuyOSg527YZwPauPHGWITlJEL26KX7K4MtsMN82hS6QwDWnGPqxm/ugaKNOBKLk5hFzqNLg1cxTqlskJua+yMZliN/NaR5+OTmDN5yX/WGbBvAWcsMlBQuiMSbU300/4Wb2rTXylYNMaM+qvucIpFuVEhkPaiMm9CSDaoTlVXhzVsMoIMmldPoxwsY/GcRe9SqAZGKYPNHqDtQUd+2jRqHIpndbdinmwIQcb99HZ0ksBXBRcp1j4RfFUzvvtnVCG+zgl12lsLf6bSyqQuv9jHwaCyk/cqCbe+n78Uz682mqJTUZwbKchgWtMSgRkHW4ZiXpcT+OR1PGd+KvCTtsnh4WVgcCZezM95bYIL5ADO5qtnsxoS8r9hG4BsXcFseb/PsG9ZdgmWqhWKxSbYdDVjoLcYKNiYRiTW7htTnSp0kEaBYoGNAsk49Ci7BFQ0vCBPy/OF2I5QRPCiyLci6Oe8CQr4ppKgPs3IsYSUOOQ="
+script:
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] || ./mvnw -s .settings.xml deploy -nsu -Dmaven.test.redirectTestOutputToFile=true'
 install:
 - MYSQL_USER=travis ./mvnw install
